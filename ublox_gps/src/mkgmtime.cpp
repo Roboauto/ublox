@@ -91,10 +91,10 @@
 #define WRONG   (-1)
 #endif /* !defined WRONG */
 
-static int tmcomp(register const struct tm * const  atmp, 
-                  register const struct tm * const btmp)
+static int tmcomp(const struct tm * const  atmp,
+                  const struct tm * const btmp)
 {
-    register int    result;
+    int    result;
 
     if ((result = (atmp->tm_year - btmp->tm_year)) == 0 &&
         (result = (atmp->tm_mon - btmp->tm_mon)) == 0 &&
@@ -106,9 +106,9 @@ static int tmcomp(register const struct tm * const  atmp,
 }
 
 time_t mkgmtime(struct tm * const tmp) {
-    register int            dir;
-    register int            bits;
-    register int            saved_seconds;
+    int            dir;
+    int            bits;
+    int            saved_seconds;
     time_t              t;
     struct tm           yourtm, *mytm;
 

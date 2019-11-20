@@ -50,6 +50,6 @@
  * @brief Get the UTC time in seconds and nano-seconds from a time struct in
  * GM time.
  */
-extern time_t mkgmtime(struct tm * const tmp);
+time_t mkgmtime(struct tm * const tmp);
 
 #endif /* INCLUDED_MKGMTIME_H */

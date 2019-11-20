@@ -29,7 +29,6 @@
 #ifndef UBLOX_SERIALIZATION_H
 #define UBLOX_SERIALIZATION_H
 
-#include <ros/console.h>
 #include <stdint.h>
 #include <boost/call_traits.hpp>
 #include <vector>
@@ -204,7 +203,7 @@ class Reader {
   {
     if (found_) return true;
     // Verify message is long enough to have sync chars, id, length & checksum
-    if (count_ < options_.wrapper_length()) return false;
+    if (count_ < static_cast<unsigned int>(options_.wrapper_length())) return false;
     // Verify the header bits
     if (data_[0] != options_.sync_a || data_[1] != options_.sync_b) 
       return false;
@@ -282,8 +281,8 @@ class Reader {
     uint16_t chk;
     if (calculateChecksum(data_ + 2, length() + 4, chk) != this->checksum()) {
       // checksum error
-      ROS_DEBUG("U-Blox read checksum error: 0x%02x / 0x%02x", classId(), 
-                messageId());
+      //ROS_DEBUG("U-Blox read checksum error: 0x%02x / 0x%02x", classId(),
+      //          messageId());
       return false;
     }
 
@@ -316,7 +315,7 @@ class Reader {
   //! The buffer of message bytes
   const uint8_t *data_; 
   //! the number of bytes in the buffer, //! decrement as the buffer is read
-  uint32_t count_; 
+  uint32_t count_;
   //! Whether or not a message has been found
   bool found_; 
   //! Options representing the sync char values, etc.
@@ -352,8 +351,8 @@ class Writer {
     // Check for buffer overflow
     uint32_t length = Serializer<T>::serializedLength(message);
     if (size_ < length + options_.wrapper_length()) {
-      ROS_ERROR("u-blox write buffer overflow. Message %u / %u not written", 
-                class_id, message_id);
+      //ROS_ERROR("u-blox write buffer overflow. Message %u / %u not written",
+      //          class_id, message_id);
       return false;
     }
     // Encode the message and add it to the buffer
@@ -374,8 +373,8 @@ class Writer {
   bool write(const uint8_t* message, uint32_t length, uint8_t class_id, 
              uint8_t message_id) {
     if (size_ < length + options_.wrapper_length()) {
-      ROS_ERROR("u-blox write buffer overflow. Message %u / %u not written", 
-                class_id, message_id);
+      //ROS_ERROR("u-blox write buffer overflow. Message %u / %u not written",
+      //          class_id, message_id);
       return false;
     }
     iterator start = data_;
@@ -436,8 +435,5 @@ class Writer {
     static const ublox::Message<message>::StaticKeyInitializer static_key_initializer_##name(class_id, message_id); \
   } } \
 
-
-// use implementation of class Serializer in "serialization_ros.h"
-#include "serialization_ros.h"
 
 #endif // UBLOX_SERIALIZATION_H

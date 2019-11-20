@@ -72,8 +72,8 @@ void Gps::processAck(const ublox_msgs::Ack &m) {
   ack.msg_id = m.msgID;
   // store the ack atomically
   ack_.store(ack, boost::memory_order_seq_cst);
-  ROS_DEBUG_COND(debug >= 2, "U-blox: received ACK: 0x%02x / 0x%02x",
-                 m.clsID, m.msgID);
+  //ROS_DEBUG_COND(debug >= 2, "U-blox: received ACK: 0x%02x / 0x%02x",
+  //                m.clsID, m.msgID);
 }
 
 void Gps::processNack(const ublox_msgs::Ack &m) {
@@ -84,7 +84,7 @@ void Gps::processNack(const ublox_msgs::Ack &m) {
   ack.msg_id = m.msgID;
   // store the ack atomically
   ack_.store(ack, boost::memory_order_seq_cst);
-  ROS_ERROR("U-blox: received NACK: 0x%02x / 0x%02x", m.clsID, m.msgID);
+  //ROS_ERROR("U-blox: received NACK: 0x%02x / 0x%02x", m.clsID, m.msgID);
 }
 
 void Gps::processUpdSosAck(const ublox_msgs::UpdSOS_Ack &m) {
@@ -95,10 +95,11 @@ void Gps::processUpdSosAck(const ublox_msgs::UpdSOS_Ack &m) {
     ack.msg_id = m.MESSAGE_ID;
     // store the ack atomically
     ack_.store(ack, boost::memory_order_seq_cst);
-    ROS_DEBUG_COND(ack.type == ACK && debug >= 2,
-                   "U-blox: received UPD SOS Backup ACK");
-    if(ack.type == NACK)
-      ROS_ERROR("U-blox: received UPD SOS Backup NACK");
+    //ROS_DEBUG_COND(ack.type == ACK && debug >= 2,
+    //               "U-blox: received UPD SOS Backup ACK");
+    if(ack.type == NACK) {
+        //ROS_ERROR("U-blox: received UPD SOS Backup NACK");
+    }
   }
 }
 
@@ -118,7 +119,7 @@ void Gps::initializeSerial(std::string port, unsigned int baudrate,
                              + port + " " + e.what());
   }
 
-  ROS_INFO("U-Blox: Opened serial port %s", port.c_str());
+  //ROS_INFO("U-Blox: Opened serial port %s", port.c_str());
     
   if(BOOST_VERSION < 106600)
   {
@@ -143,7 +144,7 @@ void Gps::initializeSerial(std::string port, unsigned int baudrate,
   boost::asio::serial_port_base::baud_rate current_baudrate;
   serial->get_option(current_baudrate);
   // Incrementally increase the baudrate to the desired value
-  for (int i = 0; i < sizeof(kBaudrates)/sizeof(kBaudrates[0]); i++) {
+  for (std::size_t i = 0; i < sizeof(kBaudrates)/sizeof(kBaudrates[0]); i++) {
     if (current_baudrate.value() == baudrate)
       break;
     // Don't step down, unless the desired baudrate is lower
@@ -154,7 +155,7 @@ void Gps::initializeSerial(std::string port, unsigned int baudrate,
     boost::this_thread::sleep(
         boost::posix_time::milliseconds(kSetBaudrateSleepMs));
     serial->get_option(current_baudrate);
-    ROS_DEBUG("U-Blox: Set ASIO baudrate to %u", current_baudrate.value());
+    //ROS_DEBUG("U-Blox: Set ASIO baudrate to %u", current_baudrate.value());
   }
   if (config_on_startup_flag_) {
     configured_ = configUart1(baudrate, uart_in, uart_out);
@@ -180,7 +181,7 @@ void Gps::resetSerial(std::string port) {
                              + port + " " + e.what());
   }
 
-  ROS_INFO("U-Blox: Reset serial port %s", port.c_str());
+  //ROS_INFO("U-Blox: Reset serial port %s", port.c_str());
 
   // Set the I/O worker
   if (worker_) return;
@@ -192,13 +193,13 @@ void Gps::resetSerial(std::string port) {
   std::vector<uint8_t> payload;
   payload.push_back(CfgPRT::PORT_ID_UART1);
   if (!poll(CfgPRT::CLASS_ID, CfgPRT::MESSAGE_ID, payload)) {
-    ROS_ERROR("Resetting Serial Port: Could not poll UART1 CfgPRT");
+    //ROS_ERROR("Resetting Serial Port: Could not poll UART1 CfgPRT");
     return;
   }
   CfgPRT prt;
   if(!read(prt, default_timeout_)) {
-    ROS_ERROR("Resetting Serial Port: Could not read polled UART1 CfgPRT %s",
-                "message");
+    //ROS_ERROR("Resetting Serial Port: Could not read polled UART1 CfgPRT %s",
+    //            "message");
     return;
   }
 
@@ -234,8 +235,8 @@ void Gps::initializeTcp(std::string host, std::string port) {
                              endpoint->service_name() + ": " + e.what());
   }
 
-  ROS_INFO("U-Blox: Connected to %s:%s.", endpoint->host_name().c_str(),
-           endpoint->service_name().c_str());
+  //ROS_INFO("U-Blox: Connected to %s:%s.", endpoint->host_name().c_str(),
+  //        endpoint->service_name().c_str());
 
   if (worker_) return;
   setWorker(boost::shared_ptr<Worker>(
@@ -245,10 +246,11 @@ void Gps::initializeTcp(std::string host, std::string port) {
 
 void Gps::close() {
   if(save_on_shutdown_) {
-    if(saveOnShutdown())
-      ROS_INFO("U-Blox Flash BBR saved");
-    else
-      ROS_INFO("U-Blox Flash BBR failed to save");
+    if (saveOnShutdown()) {
+        //ROS_INFO("U-Blox Flash BBR saved");
+    }else {
+        //ROS_INFO("U-Blox Flash BBR failed to save");
+    }
   }
   worker_.reset();
   configured_ = false;
@@ -266,8 +268,8 @@ void Gps::reset(const boost::posix_time::time_duration& wait) {
 }
 
 bool Gps::configReset(uint16_t nav_bbr_mask, uint16_t reset_mode) {
-  ROS_WARN("Resetting u-blox. If device address changes, %s",
-           "node must be relaunched.");
+//  ROS_WARN("Resetting u-blox. If device address changes, %s",
+//           "node must be relaunched.");
 
   CfgRST rst;
   rst.navBbrMask = nav_bbr_mask;
@@ -282,14 +284,15 @@ bool Gps::configReset(uint16_t nav_bbr_mask, uint16_t reset_mode) {
 bool Gps::configGnss(CfgGNSS gnss,
                      const boost::posix_time::time_duration& wait) {
   // Configure the GNSS settingshttps://mail.google.com/mail/u/0/#inbox
-  ROS_DEBUG("Re-configuring GNSS.");
+  //ROS_DEBUG("Re-configuring GNSS.");
   if (!configure(gnss))
     return false;
   // Cold reset the GNSS
-  ROS_WARN("GNSS re-configured, cold resetting device.");
+//  ROS_WARN("GNSS re-configured, cold resetting device.");
   if (!configReset(CfgRST::NAV_BBR_COLD_START, CfgRST::RESET_MODE_GNSS))
     return false;
-  ros::Duration(1.0).sleep();
+  std::this_thread::sleep_for(std::chrono::microseconds(1000));
+  //ros::Duration(1.0).sleep();
   // Reset the I/O
   reset(wait);
   return isConfigured();
@@ -320,8 +323,8 @@ bool Gps::configUart1(unsigned int baudrate, uint16_t in_proto_mask,
                       uint16_t out_proto_mask) {
   if (!worker_) return true;
 
-  ROS_DEBUG("Configuring UART1 baud rate: %u, In/Out Protocol: %u / %u",
-            baudrate, in_proto_mask, out_proto_mask);
+  //ROS_DEBUG("Configuring UART1 baud rate: %u, In/Out Protocol: %u / %u",
+  //          baudrate, in_proto_mask, out_proto_mask);
 
   CfgPRT port;
   port.portID = CfgPRT::PORT_ID_UART1;
@@ -334,17 +337,17 @@ bool Gps::configUart1(unsigned int baudrate, uint16_t in_proto_mask,
 }
 
 bool Gps::disableUart1(CfgPRT& prev_config) {
-  ROS_DEBUG("Disabling UART1");
+  //ROS_DEBUG("Disabling UART1");
 
   // Poll UART PRT Config
   std::vector<uint8_t> payload;
   payload.push_back(CfgPRT::PORT_ID_UART1);
   if (!poll(CfgPRT::CLASS_ID, CfgPRT::MESSAGE_ID, payload)) {
-    ROS_ERROR("disableUart: Could not poll UART1 CfgPRT");
+    //ROS_ERROR("disableUart: Could not poll UART1 CfgPRT");
     return false;
   }
   if(!read(prev_config, default_timeout_)) {
-    ROS_ERROR("disableUart: Could not read polled UART1 CfgPRT message");
+    //ROS_ERROR("disableUart: Could not read polled UART1 CfgPRT message");
     return false;
   }
   // Keep original settings, but disable in/out
@@ -364,8 +367,8 @@ bool Gps::configUsb(uint16_t tx_ready,
                     uint16_t out_proto_mask) {
   if (!worker_) return true;
 
-  ROS_DEBUG("Configuring USB tx_ready: %u, In/Out Protocol: %u / %u",
-            tx_ready, in_proto_mask, out_proto_mask);
+  //ROS_DEBUG("Configuring USB tx_ready: %u, In/Out Protocol: %u / %u",
+  //          tx_ready, in_proto_mask, out_proto_mask);
 
   CfgPRT port;
   port.portID = CfgPRT::PORT_ID_USB;
@@ -376,8 +379,8 @@ bool Gps::configUsb(uint16_t tx_ready,
 }
 
 bool Gps::configRate(uint16_t meas_rate, uint16_t nav_rate) {
-  ROS_DEBUG("Configuring measurement rate to %u ms and nav rate to %u cycles",
-    meas_rate, nav_rate);
+  //ROS_DEBUG("Configuring measurement rate to %u ms and nav rate to %u cycles",
+  //  meas_rate, nav_rate);
 
   CfgRATE rate;
   rate.measRate = meas_rate;
@@ -388,9 +391,9 @@ bool Gps::configRate(uint16_t meas_rate, uint16_t nav_rate) {
 
 bool Gps::configRtcm(std::vector<uint8_t> ids, std::vector<uint8_t> rates) {
   for(size_t i = 0; i < ids.size(); ++i) {
-    ROS_DEBUG("Setting RTCM %d Rate %u", ids[i], rates[i]);
+    //ROS_DEBUG("Setting RTCM %d Rate %u", ids[i], rates[i]);
     if(!setRate(ublox_msgs::Class::RTCM, (uint8_t)ids[i], rates[i])) {
-      ROS_ERROR("Could not set RTCM %d to rate %u", ids[i], rates[i]);
+      //ROS_ERROR("Could not set RTCM %d to rate %u", ids[i], rates[i]);
       return false;
     }
   }
@@ -398,7 +401,7 @@ bool Gps::configRtcm(std::vector<uint8_t> ids, std::vector<uint8_t> rates) {
 }
 
 bool Gps::configSbas(bool enable, uint8_t usage, uint8_t max_sbas) {
-  ROS_DEBUG("Configuring SBAS: usage %u, max_sbas %u", usage, max_sbas);
+  //ROS_DEBUG("Configuring SBAS: usage %u, max_sbas %u", usage, max_sbas);
 
   ublox_msgs::CfgSBAS msg;
   msg.mode = (enable ? CfgSBAS::MODE_ENABLED : 0);
@@ -412,12 +415,12 @@ bool Gps::configTmode3Fixed(bool lla_flag,
                             std::vector<int8_t> arp_position_hp,
                             float fixed_pos_acc) {
   if(arp_position.size() != 3 || arp_position_hp.size() != 3) {
-    ROS_ERROR("Configuring TMODE3 to Fixed: size of position %s",
-              "& arp_position_hp args must be 3");
+    //ROS_ERROR("Configuring TMODE3 to Fixed: size of position %s",
+    //          "& arp_position_hp args must be 3");
     return false;
   }
 
-  ROS_DEBUG("Configuring TMODE3 to Fixed");
+  //ROS_DEBUG("Configuring TMODE3 to Fixed");
 
   CfgTMODE3 tmode3;
   tmode3.flags = tmode3.FLAGS_MODE_FIXED & tmode3.FLAGS_MODE_MASK;
@@ -446,7 +449,7 @@ bool Gps::configTmode3Fixed(bool lla_flag,
 bool Gps::configTmode3SurveyIn(unsigned int svin_min_dur,
                                float svin_acc_limit) {
   CfgTMODE3 tmode3;
-  ROS_DEBUG("Setting TMODE3 to Survey In");
+  //ROS_DEBUG("Setting TMODE3 to Survey In");
   tmode3.flags = tmode3.FLAGS_MODE_SURVEY_IN & tmode3.FLAGS_MODE_MASK;
   tmode3.svinMinDur = svin_min_dur;
   // Convert from m to [0.1 mm]
@@ -455,7 +458,7 @@ bool Gps::configTmode3SurveyIn(unsigned int svin_min_dur,
 }
 
 bool Gps::disableTmode3() {
-  ROS_DEBUG("Disabling TMODE3");
+  //ROS_DEBUG("Disabling TMODE3");
 
   CfgTMODE3 tmode3;
   tmode3.flags = tmode3.FLAGS_MODE_DISABLED & tmode3.FLAGS_MODE_MASK;
@@ -463,8 +466,8 @@ bool Gps::disableTmode3() {
 }
 
 bool Gps::setRate(uint8_t class_id, uint8_t message_id, uint8_t rate) {
-  ROS_DEBUG_COND(debug >= 2, "Setting rate 0x%02x, 0x%02x, %u", class_id,
-                 message_id, rate);
+  //ROS_DEBUG_COND(debug >= 2, "Setting rate 0x%02x, 0x%02x, %u", class_id,
+  //               message_id, rate);
   ublox_msgs::CfgMSG msg;
   msg.msgClass = class_id;
   msg.msgID = message_id;
@@ -473,7 +476,7 @@ bool Gps::setRate(uint8_t class_id, uint8_t message_id, uint8_t rate) {
 }
 
 bool Gps::setDynamicModel(uint8_t model) {
-  ROS_DEBUG("Setting dynamic model to %u", model);
+  //ROS_DEBUG("Setting dynamic model to %u", model);
 
   ublox_msgs::CfgNAV5 msg;
   msg.dynModel = model;
@@ -482,7 +485,7 @@ bool Gps::setDynamicModel(uint8_t model) {
 }
 
 bool Gps::setFixMode(uint8_t mode) {
-  ROS_DEBUG("Setting fix mode to %u", mode);
+  //ROS_DEBUG("Setting fix mode to %u", mode);
 
   ublox_msgs::CfgNAV5 msg;
   msg.fixMode = mode;
@@ -491,7 +494,7 @@ bool Gps::setFixMode(uint8_t mode) {
 }
 
 bool Gps::setDeadReckonLimit(uint8_t limit) {
-  ROS_DEBUG("Setting DR Limit to %u", limit);
+  //ROS_DEBUG("Setting DR Limit to %u", limit);
 
   ublox_msgs::CfgNAV5 msg;
   msg.drLimit = limit;
@@ -500,7 +503,7 @@ bool Gps::setDeadReckonLimit(uint8_t limit) {
 }
 
 bool Gps::setPpp(bool enable) {
-  ROS_DEBUG("%s PPP", (enable ? "Enabling" : "Disabling"));
+  //ROS_DEBUG("%s PPP", (enable ? "Enabling" : "Disabling"));
 
   ublox_msgs::CfgNAVX5 msg;
   msg.usePPP = enable;
@@ -510,13 +513,13 @@ bool Gps::setPpp(bool enable) {
 
 bool Gps::setDgnss(uint8_t mode) {
   CfgDGNSS cfg;
-  ROS_DEBUG("Setting DGNSS mode to %u", mode);
+  //ROS_DEBUG("Setting DGNSS mode to %u", mode);
   cfg.dgnssMode = mode;
   return configure(cfg);
 }
 
 bool Gps::setUseAdr(bool enable) {
-  ROS_DEBUG("%s ADR/UDR", (enable ? "Enabling" : "Disabling"));
+  //ROS_DEBUG("%s ADR/UDR", (enable ? "Enabling" : "Disabling"));
 
   ublox_msgs::CfgNAVX5 msg;
   msg.useAdr = enable;
@@ -539,8 +542,8 @@ bool Gps::poll(uint8_t class_id, uint8_t message_id,
 
 bool Gps::waitForAcknowledge(const boost::posix_time::time_duration& timeout,
                              uint8_t class_id, uint8_t msg_id) {
-  ROS_DEBUG_COND(debug >= 2, "Waiting for ACK 0x%02x / 0x%02x",
-                 class_id, msg_id);
+  //ROS_DEBUG_COND(debug >= 2, "Waiting for ACK 0x%02x / 0x%02x",
+  //               class_id, msg_id);
   boost::posix_time::ptime wait_until(
       boost::posix_time::second_clock::local_time() + timeout);
 
@@ -552,6 +555,7 @@ bool Gps::waitForAcknowledge(const boost::posix_time::time_duration& timeout,
     worker_->wait(timeout);
     ack = ack_.load(boost::memory_order_seq_cst);
   }
+
   bool result = ack.type == ACK
                 && ack.class_id == class_id
                 && ack.msg_id == msg_id;
@@ -564,7 +568,7 @@ void Gps::setRawDataCallback(const Worker::Callback& callback) {
 }
 
 bool Gps::setUTCtime() {
-  ROS_DEBUG("Setting time to UTC time");
+  //ROS_DEBUG("Setting time to UTC time");
 
   ublox_msgs::CfgNAV5 msg;
   msg.utcStandard = 3;
@@ -572,7 +576,7 @@ bool Gps::setUTCtime() {
 }
 
 bool Gps::setTimtm2(uint8_t rate) {
-  ROS_DEBUG("TIM-TM2 send rate on current port set to %u", rate );
+  //ROS_DEBUG("TIM-TM2 send rate on current port set to %u", rate );
   ublox_msgs::CfgMSG msg;
   msg.msgClass = ublox_msgs::TimTM2::CLASS_ID;
   msg.msgID = ublox_msgs::TimTM2::MESSAGE_ID;

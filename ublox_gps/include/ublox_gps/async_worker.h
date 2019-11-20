@@ -42,7 +42,7 @@
 
 namespace ublox_gps {
 
-int debug; //!< Used to determine which debug messages to display
+inline int debug; //!< Used to determine which debug messages to display
 
 /**
  * @brief Handles Asynchronous I/O reading and writing.
@@ -113,25 +113,25 @@ class AsyncWorker : public Worker {
    */
   void doClose();
 
-  boost::shared_ptr<StreamT> stream_; //!< The I/O stream
-  boost::shared_ptr<boost::asio::io_service> io_service_; //!< The I/O service
+  boost::shared_ptr<StreamT> stream_{}; //!< The I/O stream
+  boost::shared_ptr<boost::asio::io_service> io_service_{}; //!< The I/O service
 
-  Mutex read_mutex_; //!< Lock for the input buffer
-  boost::condition read_condition_;
-  std::vector<unsigned char> in_; //!< The input buffer
-  std::size_t in_buffer_size_; //!< number of bytes currently in the input
+  Mutex read_mutex_{}; //!< Lock for the input buffer
+  boost::condition read_condition_{};
+  std::vector<unsigned char> in_{}; //!< The input buffer
+  std::size_t in_buffer_size_{}; //!< number of bytes currently in the input
                                //!< buffer
 
-  Mutex write_mutex_; //!< Lock for the output buffer
-  boost::condition write_condition_;
-  std::vector<unsigned char> out_; //!< The output buffer
+  Mutex write_mutex_{}; //!< Lock for the output buffer
+  boost::condition write_condition_{};
+  std::vector<unsigned char> out_{}; //!< The output buffer
 
-  boost::shared_ptr<boost::thread> background_thread_; //!< thread for the I/O
+  boost::shared_ptr<boost::thread> background_thread_{}; //!< thread for the I/O
                                                        //!< service
-  Callback read_callback_; //!< Callback function to handle received messages
-  Callback write_callback_; //!< Callback function to handle raw data
+  Callback read_callback_{}; //!< Callback function to handle received messages
+  Callback write_callback_{}; //!< Callback function to handle raw data
 
-  bool stopping_; //!< Whether or not the I/O service is closed
+  bool stopping_{}; //!< Whether or not the I/O service is closed
 };
 
 template <typename StreamT>
@@ -163,12 +163,12 @@ bool AsyncWorker<StreamT>::send(const unsigned char* data,
                                 const unsigned int size) {
   ScopedLock lock(write_mutex_);
   if(size == 0) {
-    ROS_ERROR("Ublox AsyncWorker::send: Size of message to send is 0");
+    //ROS_ERROR("Ublox AsyncWorker::send: Size of message to send is 0");
     return true;
   }
 
   if (out_.capacity() - out_.size() < size) {
-    ROS_ERROR("Ublox AsyncWorker::send: Output buffer too full to send message");
+    //ROS_ERROR("Ublox AsyncWorker::send: Output buffer too full to send message");
     return false;
   }
   out_.insert(out_.end(), data, data + size);
@@ -193,7 +193,7 @@ void AsyncWorker<StreamT>::doWrite() {
     for (std::vector<unsigned char>::iterator it = out_.begin();
          it != out_.end(); ++it)
       oss << boost::format("%02x") % static_cast<unsigned int>(*it) << " ";
-    ROS_DEBUG("U-Blox sent %li bytes: \n%s", out_.size(), oss.str().c_str());
+    //ROS_DEBUG("U-Blox sent %li bytes: \n%s", out_.size(), oss.str().c_str());
   }
   // Clear the buffer & unlock
   out_.clear();
@@ -216,9 +216,9 @@ void AsyncWorker<StreamT>::readEnd(const boost::system::error_code& error,
                                    std::size_t bytes_transfered) {
   ScopedLock lock(read_mutex_);
   if (error) {
-    ROS_ERROR("U-Blox ASIO input buffer read error: %s, %li",
-              error.message().c_str(),
-              bytes_transfered);
+    //ROS_ERROR("U-Blox ASIO input buffer read error: %s, %li",
+//              error.message().c_str(),
+//              bytes_transfered);
   } else if (bytes_transfered > 0) {
     in_buffer_size_ += bytes_transfered;
 
@@ -234,8 +234,8 @@ void AsyncWorker<StreamT>::readEnd(const boost::system::error_code& error,
                in_.begin() + in_buffer_size_ - bytes_transfered;
            it != in_.begin() + in_buffer_size_; ++it)
         oss << boost::format("%02x") % static_cast<unsigned int>(*it) << " ";
-      ROS_DEBUG("U-Blox received %li bytes \n%s", bytes_transfered,
-               oss.str().c_str());
+      //ROS_DEBUG("U-Blox received %li bytes \n%s", bytes_transfered,
+//               oss.str().c_str());
     }
 
     if (read_callback_)
@@ -254,9 +254,9 @@ void AsyncWorker<StreamT>::doClose() {
   stopping_ = true;
   boost::system::error_code error;
   stream_->close(error);
-  if(error)
-    ROS_ERROR_STREAM(
-        "Error while closing the AsyncWorker stream: " << error.message());
+  //if(error)
+    //ROS_ERROR_STREAM(
+    //    "Error while closing the AsyncWorker stream: " << error.message());
 }
 
 template <typename StreamT>

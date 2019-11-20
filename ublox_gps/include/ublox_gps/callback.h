@@ -29,7 +29,6 @@
 #ifndef UBLOX_GPS_CALLBACK_H
 #define UBLOX_GPS_CALLBACK_H
 
-#include <ros/console.h>
 #include <ublox/serialization/ublox_msgs.h>
 #include <boost/format.hpp>
 #include <boost/function.hpp>
@@ -42,6 +41,7 @@ namespace ublox_gps {
  */
 class CallbackHandler {
  public:
+    virtual ~CallbackHandler() = default;
   /**
    * @brief Decode the u-blox message.
    */
@@ -56,8 +56,8 @@ class CallbackHandler {
   }
 
  protected:
-  boost::mutex mutex_; //!< Lock for the handler
-  boost::condition_variable condition_; //!< Condition for the handler lock
+  boost::mutex mutex_{}; //!< Lock for the handler
+  boost::condition_variable condition_{}; //!< Condition for the handler lock
 };
 
 /**
@@ -88,20 +88,20 @@ class CallbackHandler_ : public CallbackHandler {
     boost::mutex::scoped_lock lock(mutex_);
     try {
       if (!reader.read<T>(message_)) {
-        ROS_DEBUG_COND(debug >= 2, 
-                       "U-Blox Decoder error for 0x%02x / 0x%02x (%d bytes)", 
-                       static_cast<unsigned int>(reader.classId()),
-                       static_cast<unsigned int>(reader.messageId()),
-                       reader.length());
+//        ROS_DEBUG_CON(debug >= 2,
+//                      D "U-Blox Decoder error for 0x%02x / 0x%02x (%d bytes)",
+//                       static_cast<unsigned int>(reader.classId()),
+//                       static_cast<unsigned int>(reader.messageId()),
+//                       reader.length());
         condition_.notify_all();
         return;
       }
     } catch (std::runtime_error& e) {
-      ROS_DEBUG_COND(debug >= 2, 
-                     "U-Blox Decoder error for 0x%02x / 0x%02x (%d bytes)", 
-                     static_cast<unsigned int>(reader.classId()),
-                     static_cast<unsigned int>(reader.messageId()),
-                     reader.length());
+//      ROS_DEBUG_COND(debug >= 2,
+//                     "U-Blox Decoder error for 0x%02x / 0x%02x (%d bytes)",
+//                     static_cast<unsigned int>(reader.classId()),
+//                     static_cast<unsigned int>(reader.messageId()),
+//                     reader.length());
       condition_.notify_all();
       return;
     }
@@ -112,7 +112,7 @@ class CallbackHandler_ : public CallbackHandler {
   
  private:
   Callback func_; //!< the callback function to handle the message
-  T message_; //!< The last received message
+  T message_{}; //!< The last received message
 };
 
 /**
@@ -209,11 +209,12 @@ class CallbackHandlers {
       if (debug >= 3) {
         // Print the received bytes
         std::ostringstream oss;
-        for (ublox::Reader::iterator it = reader.pos();
-             it != reader.pos() + reader.length() + 8; ++it)
-          oss << boost::format("%02x") % static_cast<unsigned int>(*it) << " ";
-        ROS_DEBUG("U-blox: reading %d bytes\n%s", reader.length() + 8, 
-                 oss.str().c_str());
+        for (ublox::Reader::iterator it = reader.pos(); it != reader.pos() + reader.length() + 8; ++it) {
+            oss << boost::format("%02x") % static_cast<unsigned int>(*it) << " ";
+        }
+        //ROS_DEBUG("U-blox: reading %d bytes\n%s", reader.length() + 8,
+        //         oss.str().c_str());
+
       }
 
       handle(reader);
@@ -229,8 +230,8 @@ class CallbackHandlers {
                         boost::shared_ptr<CallbackHandler> > Callbacks;
 
   // Call back handlers for u-blox messages
-  Callbacks callbacks_;
-  boost::mutex callback_mutex_;
+  Callbacks callbacks_{};
+  boost::mutex callback_mutex_{};
 };
 
 }  // namespace ublox_gps

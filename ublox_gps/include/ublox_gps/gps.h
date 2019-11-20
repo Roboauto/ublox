@@ -39,10 +39,8 @@
 #include <boost/asio/serial_port.hpp>
 #include <boost/asio/io_service.hpp>
 #include <boost/atomic.hpp>
-// ROS
-#include <ros/console.h>
 // Other u-blox packages
-#include <ublox/serialization/ublox_msgs.h>
+//#include <ublox/serialization/ublox_msgs.h>
 // u-blox gps
 #include <ublox_gps/async_worker.h>
 #include <ublox_gps/callback.h>
@@ -77,6 +75,9 @@ class Gps {
   Gps();
   virtual ~Gps();
 
+  void writeToserial(const std::string& data) {
+      worker_->send(reinterpret_cast<const unsigned char*>(data.c_str()), data.size());
+  }
   /**
    * @brief If called, when the node shuts down, it will send a command to
    * save the flash memory.
@@ -462,24 +463,24 @@ class Gps {
   bool saveOnShutdown();
 
   //! Processes I/O stream data
-  boost::shared_ptr<Worker> worker_;
+  boost::shared_ptr<Worker> worker_{};
   //! Whether or not the I/O port has been configured
-  bool configured_;
+  bool configured_{};
   //! Whether or not to save Flash BBR on shutdown
-  bool save_on_shutdown_;
+  bool save_on_shutdown_{};
   //!< Whether or not initial configuration to the hardware is done
-  bool config_on_startup_flag_;
+  bool config_on_startup_flag_{};
 
 
   //! The default timeout for ACK messages
   static const boost::posix_time::time_duration default_timeout_;
   //! Stores last received ACK accessed by multiple threads
-  mutable boost::atomic<Ack> ack_;
+  mutable boost::atomic<Ack> ack_{};
 
   //! Callback handlers for u-blox messages
-  CallbackHandlers callbacks_;
+  CallbackHandlers callbacks_{};
 
-  std::string host_, port_;
+  std::string host_{}, port_{};
 };
 
 template <typename T>
@@ -516,7 +517,10 @@ bool Gps::read(T& message, const boost::posix_time::time_duration& timeout) {
 
 template <typename ConfigT>
 bool Gps::configure(const ConfigT& message, bool wait) {
-  if (!worker_) return false;
+  if (!worker_) {
+      std::cerr << "no Worker" << std::endl;
+      return false;
+  }
 
   // Reset ack
   Ack ack;
@@ -527,8 +531,9 @@ bool Gps::configure(const ConfigT& message, bool wait) {
   std::vector<unsigned char> out(kWriterSize);
   ublox::Writer writer(out.data(), out.size());
   if (!writer.write(message)) {
-    ROS_ERROR("Failed to encode config message 0x%02x / 0x%02x",
-              message.CLASS_ID, message.MESSAGE_ID);
+      std::cerr << "Failed to encode config message" << std::endl;
+    //ROS_ERROR("Failed to encode config message 0x%02x / 0x%02x",
+    //          message.CLASS_ID, message.MESSAGE_ID);
     return false;
   }
   // Send the message to the device
