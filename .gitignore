@@ -71,8 +71,6 @@ html_docs/
 html_docs/*
 
 # ANDROID SDK GENERATED JAVA
-gen/
-gen/*
 
 # COMPILED DYNAMIC LIBRARIES
 *.so
