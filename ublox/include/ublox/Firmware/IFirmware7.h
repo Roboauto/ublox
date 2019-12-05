@@ -92,11 +92,7 @@ namespace Ublox::Firmware {
             gpsData->covariance.e_e = varH;
             gpsData->covariance.n_n = varH;
 
-            if(message.flags & NavPVT::FLAGS_DIFF_SOLN) {
-                std::cerr << "DGPSS" << std::endl;
-            } else {
-                std::cerr << "WITHOUT DGPS" << std::endl;
-            }
+            gpsData->isRtkUsed = (message.flags & NavPVT::FLAGS_DIFF_SOLN);
 
             positionProvider_(gpsData);
 
