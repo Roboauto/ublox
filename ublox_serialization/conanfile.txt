@@ -1,4 +1,3 @@
 [requires]
-    boost_utility/1.69.0@bincrafters/stable
 [generators]
     cmake

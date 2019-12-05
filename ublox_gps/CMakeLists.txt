@@ -25,12 +25,9 @@ target_include_directories(ublox_gps
     PUBLIC ${PROJECT_SOURCE_DIR}/include
     PUBLIC ${PROJECT_SOURCE_DIR}/../ublox_serialization/include)
 
+message(archi:${ARCHITECTURE})
+
 target_link_libraries(ublox_gps
-  CONAN_PKG::boost_system
-  CONAN_PKG::boost_regex
-  CONAN_PKG::boost_thread
-  CONAN_PKG::boost_asio
-  CONAN_PKG::boost_format
   pthread
   ublox_msgs
 )

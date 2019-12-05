@@ -9,6 +9,8 @@ if(NOT EXISTS "${CMAKE_BINARY_DIR}/conan.cmake")
     file(DOWNLOAD "https://raw.githubusercontent.com/conan-io/cmake-conan/master/conan.cmake"
             "${CMAKE_BINARY_DIR}/conan.cmake")
 endif()
+message(comp:${CMAKE_CXX_COMPILER})
+message(ublox archi:${ARCHITECTURE})
 
 include(${CMAKE_BINARY_DIR}/conan.cmake)
 
@@ -19,5 +21,5 @@ conan_cmake_run(CONANFILE conanfile.txt
 target_include_directories(ublox_serialization
     INTERFACE include)
 
-target_link_libraries(ublox_serialization
-        INTERFACE CONAN_PKG::boost_utility)
+
+target_link_libraries(ublox_serialization)
