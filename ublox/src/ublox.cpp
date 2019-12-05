@@ -143,7 +143,6 @@ void Ublox::UbloxGPS::onRawData(unsigned char*data, std::size_t &size) {
 
     std::string str{reinterpret_cast<char*>(data), size};
     if(str.size() >= 6 && str[0] == '$' && str.substr(3,3) == "GGA") {
-        std::cerr << str << std::endl;
         GGANMEAMsgProvider(std::make_shared<std::string>(str));
     }
 }
