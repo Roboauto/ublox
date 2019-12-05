@@ -1,7 +1,7 @@
 #include <ublox/Product/HpPosRec.h>
 
 void Ublox::Product::HpPosRec::callbackNavRelPosNed(const ublox_msgs::NavRELPOSNED9 &) {
-    std::cerr << "NavReLPoseNEed" << std::endl;
+//    std::cerr << "NavReLPoseNEed" << std::endl;
 
 
 /*    static ros::Publisher imu_pub = nh->advertise<sensor_msgs::Imu>("navheading", kROSQueueSize);
