@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.4)
 project(ublox)
 
+find_package(Boost COMPONENTS REQUIRED thread)
+
 add_subdirectory(ublox_gps)
 
 add_library(ublox
@@ -16,6 +18,7 @@ target_link_libraries(ublox
     ublox_gps
     RoboCore::Core
     RoboCore::Sensors
+    ${Boost_LIBRARIES}
 )
 
 target_include_directories(ublox
