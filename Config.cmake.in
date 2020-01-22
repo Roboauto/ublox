@@ -1,0 +1,37 @@
+@PACKAGE_INIT@
+
+set_and_check(ublox "@PLUGIN_DIRS@")
+
+RoboCore_createPlugin(ublox ublox)
+
+RoboCore_requirePlugins("@REQUIRE_PLUGINS@")
+
+add_library(ublox_shared INTERFACE IMPORTED GLOBAL)
+
+target_link_libraries(ublox_shared
+  INTERFACE @ublox_shared_FILENAME@ @ublox_shared_REQUIRES@
+)
+
+target_link_directories(ublox_shared
+	INTERFACE ${ublox_DIRS}/lib
+)
+
+target_include_directories(ublox_shared
+	INTERFACE ${ublox_DIRS}/include
+)
+
+add_library(ublox_static INTERFACE IMPORTED GLOBAL)
+
+target_link_directories(ublox_static
+	INTERFACE ${ublox_DIRS}/lib
+)
+
+target_link_libraries(ublox_static
+  INTERFACE @ublox_static_FILENAME@ @ublox_static_REQUIRES@
+)
+
+target_include_directories(ublox_static
+	INTERFACE ${ublox_DIRS}/include
+)
+
+add_library(ublox ALIAS ublox_shared)
