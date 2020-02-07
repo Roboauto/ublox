@@ -1,0 +1,11 @@
+[options]
+Qt:GUI=True
+Qt:qtquickcontrols=True
+Qt:qtquickcontrols2=True
+Qt:qt3d=True
+Qt:qtcanvas3d=True
+Qt:qtdatavis3d=True
+Qt:qtlocation=True
+Qt:qtcharts=True
+Qt:qtgamepad=True
+Qt:openssl=True

@@ -1,0 +1,5 @@
+include(../../libs/robo-core/conan_profiles/aarch64/GNU-7)
+include(../BuildProfile)
+
+[options]
+Qt:opengl=es2

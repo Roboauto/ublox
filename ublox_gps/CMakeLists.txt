@@ -21,13 +21,16 @@ add_library(ublox_gps
     src/mkgmtime.cpp)
 
 # include other ublox packages
-target_include_directories(ublox_gps
-    PUBLIC ${PROJECT_SOURCE_DIR}/include
-    PUBLIC ${PROJECT_SOURCE_DIR}/../ublox_serialization/include)
+target_include_directories(ublox_gps PUBLIC
+    PUBLIC ${PROJECT_SOURCE_DIR}/include)
 
 message(archi:${ARCHITECTURE})
 
-target_link_libraries(ublox_gps
-  pthread
-  ublox_msgs
+target_link_libraries(ublox_gps PUBLIC
+    pthread
+    ublox_msgs
+    CONAN_PKG::spdlog
+    CONAN_PKG::msgpack
+    CONAN_PKG::yaml-cpp
+    CONAN_PKG::eigen
 )

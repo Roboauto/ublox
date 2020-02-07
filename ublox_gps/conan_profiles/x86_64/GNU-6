@@ -1,0 +1,4 @@
+include(../../libs/robo-core/conan_profiles/x86_64/GNU-6)
+include(../BuildProfile)
+
+[options]
