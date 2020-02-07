@@ -1,5 +1,0 @@
-include(../../libs/robo-core/conan_profiles/x86_64/GNU-7)
-include(../BuildProfile)
-
-[options]
-Qt:freetype=True

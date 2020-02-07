@@ -1,4 +1,0 @@
-include(../../libs/robo-core/conan_profiles/x86_64/Clang-6)
-include(../BuildProfile)
-
-[options]

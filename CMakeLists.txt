@@ -1,29 +1,27 @@
 cmake_minimum_required(VERSION 3.13)
 project(ublox CXX)
 
-find_package(Boost COMPONENTS REQUIRED thread)
-
-set(CMAKE_CXX_STANDARD 17)
-
-if (${CMAKE_CXX_COMPILER} MATCHES ".*aarch64.*")
-    set(ARCHITECTURE aarch64)
-    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -march=armv8-a+crypto+crc -mtune=cortex-a57")
-else ()
-    set(ARCHITECTURE x86_64)
-    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -march=native -mtune=native")
-endif ()
-
-if(BUILD_STANDALONE)
+if (BUILD_STANDALONE)
     set(RoboCore_DIR /usr/local)
     set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${RoboCore_DIR}/cmake)
     find_package("RoboCore")
 
+    RoboCore_setArchitecture(ARCHITECTURE)
     RoboCore_setConanProfile(${PROJECT_SOURCE_DIR}/conan_profiles/${ARCHITECTURE}/${CMAKE_CXX_COMPILER_ID}-${COMPILER_VERSION_MAJOR})
-endif()
+endif ()
+
+RoboCore_createPlugin(RoboCore::Networking RoboCore_Networking)
+
+set(CMAKE_CXX_STANDARD 17)
+
+RoboCore_requirePlugin("RoboCore::Sensors")
+
+RoboCore_conanRequire(conanfile.txt)
 
 add_subdirectory(ublox_gps)
 
-RoboCore_requirePlugin("RoboCore::Sensors")
+
+find_package(Boost COMPONENTS REQUIRED thread)
 
 set(SOURCE_LIST
     ublox/src/ublox.cpp
@@ -38,10 +36,13 @@ RoboCore_generateStaticSharedLib(
     SOURCES ${SOURCE_LIST}
     INCLUDES ${PROJECT_SOURCE_DIR}/ublox/include
     RC_LINK_LIBS
-        RoboCore::Sensors
+    RoboCore::Sensors
     LINK_LIBS
-        ublox_gps
-        ${Boost_LIBRARIES}
+    ublox_gps
+    CONAN_PKG::spdlog
+    CONAN_PKG::msgpack
+    CONAN_PKG::yaml-cpp
+    ${Boost_LIBRARIES}
 )
 
 RoboCore_install(ublox

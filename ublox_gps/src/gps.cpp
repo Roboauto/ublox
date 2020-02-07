@@ -28,17 +28,19 @@
 //==============================================================================
 
 #include <ublox_gps/gps.h>
+#include <ublox_gps/async_worker.h>
+
 #include <boost/version.hpp>
 
 namespace ublox_gps {
 
-using namespace ublox_msgs;
+    using namespace ublox_msgs;
 
-const boost::posix_time::time_duration Gps::default_timeout_ =
-    boost::posix_time::milliseconds(
-        static_cast<int>(Gps::kDefaultAckTimeout * 1000));
+    const boost::posix_time::time_duration Gps::default_timeout_ =
+        boost::posix_time::milliseconds(
+            static_cast<int>(Gps::kDefaultAckTimeout * 1000));
 
-Gps::Gps() : configured_(false), config_on_startup_flag_(true) {
+    Gps::Gps() : configured_(false), config_on_startup_flag_(true) {
  subscribeAcks();
 }
 

@@ -202,30 +202,9 @@ class CallbackHandlers {
    * @param data the buffer of u-blox messages to process
    * @param size the size of the buffer
    */
-  void readCallback(unsigned char* data, std::size_t& size) {
-    ublox::Reader reader(data, size);
-    // Read all U-Blox messages in buffer
-    while (reader.search() != reader.end() && reader.found()) {
-      if (debug >= 3) {
-        // Print the received bytes
-        std::ostringstream oss;
-        for (ublox::Reader::iterator it = reader.pos(); it != reader.pos() + reader.length() + 8; ++it) {
-            oss << boost::format("%02x") % static_cast<unsigned int>(*it) << " ";
-        }
-        //ROS_DEBUG("U-blox: reading %d bytes\n%s", reader.length() + 8,
-        //         oss.str().c_str());
+  void readCallback(unsigned char* data, std::size_t& size);
 
-      }
-
-      handle(reader);
-    }
-
-    // delete read bytes from ASIO input buffer
-    std::copy(reader.pos(), reader.end(), data);
-    size -= reader.pos() - data;
-  }
-
- private:
+  private:
   typedef std::multimap<std::pair<uint8_t, uint8_t>,
                         boost::shared_ptr<CallbackHandler> > Callbacks;
 

@@ -3,7 +3,6 @@
 #include <ublox_gps/gps.h>
 
 #include <RoboCore/Sensor/GPS/GPS.h>
-#include <RoboCore/Sensor/Imu/ImuData.h>
 #include <RoboCore/Worker/Task.h>
 #include <RoboCore/Signal.h>
 #include <ublox/Product/IProduct.h>
