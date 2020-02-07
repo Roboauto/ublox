@@ -10,7 +10,7 @@ if (BUILD_STANDALONE)
     RoboCore_setConanProfile(${PROJECT_SOURCE_DIR}/conan_profiles/${ARCHITECTURE}/${CMAKE_CXX_COMPILER_ID}-${COMPILER_VERSION_MAJOR})
 endif ()
 
-RoboCore_createPlugin(RoboCore::Networking RoboCore_Networking)
+RoboCore_createPlugin(ublox ublox)
 
 set(CMAKE_CXX_STANDARD 17)
 
