@@ -1,9 +1,10 @@
 cmake_minimum_required(VERSION 3.13)
 project(ublox CXX)
 
+set(RoboCore_PATH "/usr/local" CACHE STRING "Path to RoboCORE installation (folder with plugins and cmake folder)")
+
 if (BUILD_STANDALONE)
-    set(RoboCore_DIR /usr/local)
-    set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${RoboCore_DIR}/cmake)
+    set (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${RoboCore_PATH}/cmake)
     find_package("RoboCore")
 
     RoboCore_setArchitecture(ARCHITECTURE)
@@ -55,6 +56,6 @@ RoboCore_install(ublox
     TARGETS ublox_gps ublox_msgs
     REQUIRE_PLUGINS RoboCore::Sensors
     REQUIRES ublox_gps ublox_msgs ${Boost_LIBRARIES}
-    CONAN_FILE ${PROJECT_SOURCE_DIR}/ublox_gps/conanfile.txt
+    CONAN_FILE ${PROJECT_SOURCE_DIR}/conanfile.txt
     README ${PROJECT_SOURCE_DIR}/README.md
 )
