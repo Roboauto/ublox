@@ -5,8 +5,8 @@ add_library(ublox_msgs src/ublox_msgs.cpp)
 
 add_subdirectory(../ublox_serialization ublox_serialization)
 
-target_link_libraries(ublox_msgs
+target_link_libraries(ublox_msgs PUBLIC
     ublox_serialization)
 
-target_include_directories(ublox_msgs
+target_include_directories(ublox_msgs PUBLIC
     PUBLIC gen/include include)

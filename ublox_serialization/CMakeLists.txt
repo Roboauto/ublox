@@ -18,7 +18,7 @@ conan_cmake_run(CONANFILE conanfile.txt
         BASIC_SETUP CMAKE_TARGETS
         BUILD missing)
 
-target_include_directories(ublox_serialization
+target_include_directories(ublox_serialization PUBLIC
     INTERFACE include)
 
 

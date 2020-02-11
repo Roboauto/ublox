@@ -42,7 +42,7 @@
 // Other u-blox packages
 //#include <ublox/serialization/ublox_msgs.h>
 // u-blox gps
-#include <ublox_gps/async_worker.h>
+#include <ublox_gps/worker.h>
 #include <ublox_gps/callback.h>
 
 /**

@@ -29,8 +29,6 @@
 #ifndef UBLOX_GPS_ASYNC_WORKER_H
 #define UBLOX_GPS_ASYNC_WORKER_H
 
-#include <ublox_gps/gps.h>
-
 #include <boost/asio.hpp>
 #include <boost/bind.hpp>
 #include <boost/format.hpp>

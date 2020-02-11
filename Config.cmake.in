@@ -1,6 +1,6 @@
 @PACKAGE_INIT@
 
-set_and_check(ublox "@PLUGIN_DIRS@")
+set_and_check(ublox_DIRS "@PLUGIN_DIRS@")
 
 RoboCore_createPlugin(ublox ublox)
 
