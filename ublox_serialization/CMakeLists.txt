@@ -17,5 +17,4 @@ include(${CMAKE_BINARY_DIR}/conan.cmake)
 target_include_directories(ublox_serialization PUBLIC
     INTERFACE include)
 
-
 target_link_libraries(ublox_serialization)

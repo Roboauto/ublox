@@ -15,12 +15,9 @@ RoboCore_createPlugin(ublox ublox)
 
 set(CMAKE_CXX_STANDARD 17)
 
-RoboCore_requirePlugin("RoboCore::Sensors")
-
-RoboCore_conanRequire(conanfile.txt)
+RoboCore_requirePlugin(RoboCore::Sensors)
 
 add_subdirectory(ublox_gps)
-
 
 find_package(Boost COMPONENTS REQUIRED thread)
 
@@ -53,6 +50,5 @@ RoboCore_install(ublox
     TARGETS ublox_gps ublox_msgs
     REQUIRE_PLUGINS RoboCore::Sensors
     REQUIRES ublox_gps ublox_msgs ${Boost_LIBRARIES}
-    CONAN_FILE ${PROJECT_SOURCE_DIR}/conanfile.txt
     README ${PROJECT_SOURCE_DIR}/README.md
 )

@@ -15,11 +15,11 @@ namespace ublox_msgs {
         static constexpr uint8_t CLASS_ID = 10;
         static constexpr uint8_t MESSAGE_ID = 4;
         
-        std::array<char, 30> swVersion;    // Zero-terminated software version string.
-        std::array<char, 10> hwVersion;    // Zero-terminated hardware version string.
+        std::array<char, 30> swVersion{};    // Zero-terminated software version string.
+        std::array<char, 10> hwVersion{};    // Zero-terminated hardware version string.
         
         // Start of repeated block (N times);
-        std::vector<MonVER_Extension> extension;
+        std::vector<MonVER_Extension> extension{};
         // End of repeated block
 
     };
