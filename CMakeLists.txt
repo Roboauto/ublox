@@ -40,9 +40,6 @@ RoboCore_generateStaticSharedLib(
     RoboCore::Sensors
     LINK_LIBS
     ublox_gps
-    CONAN_PKG::spdlog
-    CONAN_PKG::msgpack
-    CONAN_PKG::yaml-cpp
     ${Boost_LIBRARIES}
 )
 
