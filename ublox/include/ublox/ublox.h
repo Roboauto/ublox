@@ -5,8 +5,6 @@
 #include <RoboCore/Sensor/GPS/GPS.h>
 #include <RoboCore/Worker/Task.h>
 #include <RoboCore/Signal.h>
-#include <ublox/Product/IProduct.h>
-#include <ublox/Firmware/IFirmware.h>
 
 namespace Ublox {
 
@@ -75,6 +73,10 @@ namespace Ublox {
             });
         }
 
+        ~UbloxGPS(){
+            gps_.close();
+        }
+
         void loadFromMemory(const Set<uint32_t, LoadMask>& set);
         void onRTKUpdate(const std::shared_ptr<const std::string>& rtkData);
         RoboCore::SharedDataProvider<std::string> GGANMEAMsgProvider{};
@@ -82,7 +84,6 @@ namespace Ublox {
     protected:
 
         void processMonVer();
-        void addFirmwareInterface(float protocolVersion);
         void addProductInterface(std::string productCategory, std::string ref_rov = "");
 
         void onRawData(unsigned char*data, std::size_t &size);
@@ -90,8 +91,6 @@ namespace Ublox {
         ublox_gps::Gps gps_{};
         float protocolVersion_{0};
         std::set<std::string> supported_{};
-        std::shared_ptr<Product::IProduct> productInterface_{};
-        std::shared_ptr<Firmware::IFirmware> firmwareInterface_{};
 
         //! How long to wait during I/O reset [s]
         constexpr static int resetWait_ = 10;

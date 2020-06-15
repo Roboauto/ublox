@@ -23,10 +23,7 @@ find_package(Boost COMPONENTS REQUIRED thread)
 
 set(SOURCE_LIST
     ublox/src/ublox.cpp
-    ublox/src/Product/HpPosRec.cpp
-    ublox/src/Product/HpgRef.cpp
-    ublox/src/Product/AdrUdr.cpp
-    ublox/src/Firmware/Firmware8.cpp)
+        )
 
 RoboCore_generateStaticSharedLib(
     TARGET ublox
