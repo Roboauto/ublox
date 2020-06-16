@@ -18,6 +18,7 @@ set(CMAKE_CXX_STANDARD 17)
 RoboCore_requirePlugin(RoboCore::Sensors)
 
 add_subdirectory(ublox_gps)
+add_subdirectory(example)
 
 find_package(Boost COMPONENTS REQUIRED thread)
 

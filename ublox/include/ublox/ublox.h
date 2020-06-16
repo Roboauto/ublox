@@ -58,6 +58,7 @@ namespace Ublox {
     class UbloxGPS : public RoboCore::Sensor::GPS::IGPS , public RoboCore::Worker::Task {
     public:
         UbloxGPS(const std::string &host, unsigned int port) {
+
             gps_.initializeTcp(host, std::to_string(port));
             processMonVer();
             gps_.setRawDataCallback([this](unsigned char*a, std::size_t&b) {
