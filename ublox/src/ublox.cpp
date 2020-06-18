@@ -3,7 +3,7 @@
 
 #include <ublox/Firmware/IFirmware7.h>
 
-void Ublox::UbloxGPS::processMonVer() {
+void Ublox::UbloxGPS::processMonVer(double rateFps) {
     ublox_msgs::MonVER monVer;
 
     if (!gps_.poll(monVer)) {
@@ -33,9 +33,10 @@ void Ublox::UbloxGPS::processMonVer() {
 
     gps_.subscribe<ublox_msgs::NavPVT>([this](const auto& msg) {
         dataProvider(std::make_shared<RoboCore::Sensor::GPS::Data>(Ublox::Firmware::convertNavMSGv9(msg)));
-    });
+    },
+                                       1);
 
-    //addFirmwareInterface(protocolVersion_);
+    gps_.configRate(1000 / rateFps, 1);
 
     if (protocolVersion_ < 18) {
         throw std::runtime_error("protocolVersion_ < 18 is not supported");
@@ -86,10 +87,10 @@ void Ublox::UbloxGPS::addProductInterface(std::string productCategory, std::stri
     }*/
 
     if (productCategory == "HPG" && refRov.empty()) {
-        gps_.subscribe<ublox_msgs::NavRELPOSNED9>([](const auto& msg) {(void)msg;});
+        gps_.subscribe<ublox_msgs::NavRELPOSNED9>([](const auto& msg) { (void)msg; });
 
     } else if (productCategory == "ADR" || productCategory == "UDR") {
-        gps_.subscribe<ublox_msgs::EsfMEAS>([](const auto& msg ) {(void)msg;});
+        gps_.subscribe<ublox_msgs::EsfMEAS>([](const auto& msg) { (void)msg; });
     } else {
         ROBO_FATAL("Product category " << productCategory << " " << refRov << " is not supported");
     }

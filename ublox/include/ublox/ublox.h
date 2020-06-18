@@ -57,18 +57,18 @@ namespace Ublox {
 
     class UbloxGPS : public RoboCore::Sensor::GPS::IGPS , public RoboCore::Worker::Task {
     public:
-        UbloxGPS(const std::string &host, unsigned int port) {
+        UbloxGPS(const std::string &host, unsigned int port, double rateFps = 10.0) {
 
             gps_.initializeTcp(host, std::to_string(port));
-            processMonVer();
+            processMonVer(rateFps);
             gps_.setRawDataCallback([this](unsigned char*a, std::size_t&b) {
                 onRawData(a,b);
             });
         }
 
-        UbloxGPS(const std::string&dev, std::size_t baudrate, std::size_t uartIn, std::size_t uartOut) {
+        UbloxGPS(const std::string&dev, std::size_t baudrate, std::size_t uartIn, std::size_t uartOut, double rateFps = 10.0) {
             gps_.initializeSerial(dev, baudrate, uartIn, uartOut);
-            processMonVer();
+            processMonVer(rateFps);
             gps_.setRawDataCallback([this](unsigned char*a, std::size_t&b) {
                 onRawData(a,b);
             });
@@ -84,7 +84,7 @@ namespace Ublox {
 
     protected:
 
-        void processMonVer();
+        void processMonVer(double rateFps = 10.0);
         void addProductInterface(std::string productCategory, std::string ref_rov = "");
 
         void onRawData(unsigned char*data, std::size_t &size);
