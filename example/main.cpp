@@ -28,6 +28,6 @@ int main(){
     gps->dataProvider.addCallback(std::function<void(const std::shared_ptr<const RoboCore::Sensor::GPS::Data> &)>(callback) );
 
     core(RoboCore::Core::ExecutionType::Blocking);
-    while(1);
+    
     return 0;
 }
