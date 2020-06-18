@@ -33,6 +33,7 @@ namespace Ublox::Firmware {
             gpsData.time = RoboCore::Time::timeFromNanoseconds(message.nano + toUtcSeconds(message) * 1e9);
         } else {
             gpsData.time = RoboCore::Time::Time();
+            ROBO_ERROR_STATIC("GPS Time is invalid" );
         }
 
         gpsData.position.latitude = message.lat * 1e-7;  // to deg
