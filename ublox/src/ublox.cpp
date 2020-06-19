@@ -5,7 +5,7 @@
 
 void Ublox::UbloxGPS::processMonVer() {
     ublox_msgs::MonVER monVer;
-    float protocolVersion= 0 ;
+    float protocolVersion = 0;
     if (!gps_.poll(monVer)) {
         throw std::runtime_error("Failed to poll MonVER & set relevant settings");
     }
@@ -71,28 +71,45 @@ Ublox::UbloxGPS::UbloxGPS(const std::string& host, unsigned int port, double rat
     processMonVer();
 
     gps_.subscribe<ublox_msgs::NavPVT>([this](const auto& msg) {
-                                         dataProvider(std::make_shared<RoboCore::Sensor::GPS::Data>(Ublox::Firmware::convertNavMSGv9(msg)));
-                                       },
+        dataProvider(std::make_shared<RoboCore::Sensor::GPS::Data>(Ublox::Firmware::convertNavMSGv9(msg)));
+    },
                                        1);
 
     gps_.setRawDataCallback([this](unsigned char* a, std::size_t& b) {
-      onRawData(a, b);
+        onRawData(a, b);
     });
 
     gps_.configRate(1000 / rateFps, 1);
 }
 
 Ublox::UbloxGPS::UbloxGPS(const std::string& dev, std::size_t baudrate, std::size_t uartIn, std::size_t uartOut, double rateFps) {
-    gps_.initializeSerial(dev, baudrate, uartIn, uartOut);
+    bool err;
+    int connectTry = 1;
+    do {
+        err = 0;
+        try {
+            gps_.initializeSerial(dev, baudrate, uartIn, uartOut);
+        } catch (std::runtime_error& e) {
+            err = 1;
+
+            std::cerr << "could not open serial port try:" << connectTry <<" of 10" << std::endl;
+            connectTry++;
+            if( connectTry > 10){
+                throw e;
+            }
+        }
+
+    } while (err);
+
     processMonVer();
 
     gps_.subscribe<ublox_msgs::NavPVT>([this](const auto& msg) {
-                                         dataProvider(std::make_shared<RoboCore::Sensor::GPS::Data>(Ublox::Firmware::convertNavMSGv9(msg)));
-                                       },
+        dataProvider(std::make_shared<RoboCore::Sensor::GPS::Data>(Ublox::Firmware::convertNavMSGv9(msg)));
+    },
                                        1);
 
     gps_.setRawDataCallback([this](unsigned char* a, std::size_t& b) {
-      onRawData(a, b);
+        onRawData(a, b);
     });
 
     gps_.configRate(1000 / rateFps, 1);

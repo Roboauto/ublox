@@ -153,7 +153,13 @@ template <typename StreamT>
 AsyncWorker<StreamT>::~AsyncWorker() {
   io_service_->post(boost::bind(&AsyncWorker<StreamT>::doClose, this));
   background_thread_->join();
-  //io_service_->reset();
+
+    boost::system::error_code error;
+
+    stream_->close(error);
+    if( error) {
+        std::cerr << "error when closing serial stream" << std::endl;
+    }
 }
 
 template <typename StreamT>
@@ -250,11 +256,6 @@ template <typename StreamT>
 void AsyncWorker<StreamT>::doClose() {
   ScopedLock lock(read_mutex_);
   stopping_ = true;
-  boost::system::error_code error;
-  stream_->close(error);
-  //if(error)
-    //ROS_ERROR_STREAM(
-    //    "Error while closing the AsyncWorker stream: " << error.message());
 }
 
 template <typename StreamT>
