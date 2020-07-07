@@ -17,3 +17,5 @@ target_link_libraries(ublox_gps PUBLIC
     pthread
     ublox_msgs
 )
+
+set_property(TARGET ublox_gps PROPERTY POSITION_INDEPENDENT_CODE ON)
