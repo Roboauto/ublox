@@ -189,6 +189,7 @@ namespace ublox_gps {
     template<typename StreamT>
     void AsyncWorker<StreamT>::doWrite() {
         ScopedLock lock(write_mutex_);
+        ScopedLock lock1(read_mutex_);
         // Do nothing if out buffer is empty
         if (out_.size() == 0) {
             return;
