@@ -10,3 +10,5 @@ target_link_libraries(ublox_msgs PUBLIC
 
 target_include_directories(ublox_msgs PUBLIC
     PUBLIC gen/include include)
+
+set_property(TARGET ublox_msgs PROPERTY POSITION_INDEPENDENT_CODE ON)
