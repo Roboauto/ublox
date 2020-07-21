@@ -1,7 +1,5 @@
 @PACKAGE_INIT@
 
-set_and_check(ublox_DIRS "@PLUGIN_DIRS@")
-
 RoboCore_createPlugin(ublox ublox)
 
 RoboCore_requirePlugins("@REQUIRE_PLUGINS@")
@@ -13,17 +11,17 @@ target_link_libraries(ublox_shared
 )
 
 target_link_directories(ublox_shared
-	INTERFACE ${ublox_DIRS}/lib
+	INTERFACE ${PACKAGE_PREFIX_DIR}/lib
 )
 
 target_include_directories(ublox_shared
-	INTERFACE ${ublox_DIRS}/include
+	INTERFACE ${PACKAGE_PREFIX_DIR}/include
 )
 
 add_library(ublox_static INTERFACE IMPORTED GLOBAL)
 
 target_link_directories(ublox_static
-	INTERFACE ${ublox_DIRS}/lib
+	INTERFACE ${PACKAGE_PREFIX_DIR}/lib
 )
 
 target_link_libraries(ublox_static
@@ -31,7 +29,7 @@ target_link_libraries(ublox_static
 )
 
 target_include_directories(ublox_static
-	INTERFACE ${ublox_DIRS}/include
+	INTERFACE ${PACKAGE_PREFIX_DIR}/include
 )
 
 add_library(ublox ALIAS ublox_shared)

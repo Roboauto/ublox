@@ -1,1 +1,14 @@
 [options]
+    OpenCV:build_opencv_python2=False
+    OpenCV:shared=False
+    OpenCV:with_1394=False
+    OpenCV:with_cuda=False
+    OpenCV:with_gstreamer=True
+    OpenCV:with_ipp=False
+    OpenCV:with_itt=False
+    OpenCV:with_png=True
+    OpenCV:with_tbb=False
+    OpenCV:with_tiff=False
+
+    OpenSSL:no_zlib=True
+    OpenSSL:shared=True
