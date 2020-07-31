@@ -6,6 +6,8 @@ RoboCore_requirePlugins("@REQUIRE_PLUGINS@")
 
 add_library(ublox_shared INTERFACE IMPORTED GLOBAL)
 
+RoboCore_find_packages("@FIND_PACKAGES@")
+
 target_link_libraries(ublox_shared
   INTERFACE @ublox_shared_FILENAME@ @ublox_shared_REQUIRES@
 )

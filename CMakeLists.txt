@@ -49,6 +49,7 @@ RoboCore_install(ublox
         ${PROJECT_SOURCE_DIR}/ublox_serialization/include/
     TARGETS ublox_gps ublox_msgs
     REQUIRE_PLUGINS RoboCore::Sensors
+    FIND_PACKAGES Boost@thread
     REQUIRES ublox_gps ublox_msgs ${Boost_LIBRARIES}
     README ${PROJECT_SOURCE_DIR}/README.md
 )
