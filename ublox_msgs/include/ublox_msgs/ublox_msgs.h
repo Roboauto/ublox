@@ -184,6 +184,11 @@ namespace Message {
     static const uint8_t SVSI = RxmSVSI::MESSAGE_ID;
   }
 
+  #ifdef DEBUG
+  #define ROBO_CHECK_SET_DEBUG DEBUG
+  #undef DEBUG
+  #endif
+
   namespace INF {
     static const uint8_t ERROR = 0x00;
     static const uint8_t WARNING = 0x01;
@@ -191,6 +196,10 @@ namespace Message {
     static const uint8_t TEST = 0x03;
     static const uint8_t DEBUG = 0x04;
   }
+
+  #ifdef ROBO_CHECK_SET_DEBUG
+  #define DEBUG ROBO_CHECK_SET_DEBUG
+  #endif
 
   namespace ACK {
     static const uint8_t NACK = 0x00; 

@@ -7,6 +7,7 @@
 #include <RoboCore/Signal.h>
 #include <ublox/Product/IProduct.h>
 #include <ublox/Firmware/IFirmware.h>
+#include <bitset>
 
 namespace Ublox {
 

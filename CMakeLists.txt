@@ -18,8 +18,15 @@ set(CMAKE_CXX_STANDARD 17)
 RoboCore_requirePlugin(RoboCore::Sensors)
 
 add_subdirectory(ublox_gps)
-
 find_package(Boost COMPONENTS REQUIRED thread)
+
+if(MSVC)
+    set(LINK_LIBS
+    Boost::thread
+        Boost::disable_autolinking)
+    target_compile_definitions(ublox_gps PUBLIC NOGDI)
+    target_compile_definitions(ublox_msgs PRIVATE NOGDI)
+endif()
 
 set(SOURCE_LIST
     ublox/src/ublox.cpp

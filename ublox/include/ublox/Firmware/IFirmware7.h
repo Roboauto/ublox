@@ -29,7 +29,7 @@ namespace Ublox::Firmware {
     private:
         long toUtcSeconds(const NavPVT& msg) {
             // Create TM struct for mkgmtime
-            struct tm time = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+            struct tm time{};
             time.tm_year = msg.year - 1900;
             time.tm_mon = msg.month - 1;
             time.tm_mday = msg.day;

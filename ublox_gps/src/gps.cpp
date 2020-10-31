@@ -123,8 +123,7 @@ void Gps::initializeSerial(std::string port, unsigned int baudrate,
 
   //ROS_INFO("U-Blox: Opened serial port %s", port.c_str());
     
-  if(BOOST_VERSION < 106600)
-  {
+  #if BOOST_VERSION < 106600
     // NOTE(Kartik): Set serial port to "raw" mode. This is done in Boost but
     // until v1.66.0 there was a bug which didn't enable the relevant code,
     // fixed by commit: https://github.com/boostorg/asio/commit/619cea4356
@@ -133,7 +132,7 @@ void Gps::initializeSerial(std::string port, unsigned int baudrate,
     tcgetattr(fd, &tio);
     cfmakeraw(&tio);
     tcsetattr(fd, TCSANOW, &tio);
-  }
+  #endif
 
   // Set the I/O worker
   if (worker_) return;

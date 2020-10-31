@@ -18,7 +18,7 @@ void Ublox::UbloxGPS::processMonVer() {
     std::vector<std::string> extensions;
     extensions.reserve(monVer.extension.size());
     for(std::size_t i = 0; i < monVer.extension.size(); ++i) {
-        char* end = std::find(monVer.extension[i].field.begin(), monVer.extension[i].field.end(), '\0');
+        auto end = std::find(monVer.extension[i].field.begin(), monVer.extension[i].field.end(), '\0');
         extensions.push_back(std::string(monVer.extension[i].field.begin(), end));
     }
 

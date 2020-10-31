@@ -13,8 +13,13 @@ add_library(ublox_gps
 target_include_directories(ublox_gps PUBLIC
     PUBLIC ${PROJECT_SOURCE_DIR}/include)
 
+if(NOT MSVC)
+    set(DEPENDENCIES 
+        pthread)
+endif()
+
 target_link_libraries(ublox_gps PUBLIC
-    pthread
+    ${DEPENDENCIES}
     ublox_msgs
 )
 

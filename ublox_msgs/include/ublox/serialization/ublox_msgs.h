@@ -29,6 +29,10 @@
 
 #ifndef UBLOX_SERIALIZATION_UBLOX_MSGS_H
 #define UBLOX_SERIALIZATION_UBLOX_MSGS_H
+#ifdef _MSC_VER
+using uint = unsigned int;
+#endif
+
 
 #include <ublox/serialization.h>
 #include <ublox_msgs/ublox_msgs.h>
